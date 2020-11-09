@@ -18,14 +18,18 @@ public class Test4 {
         f.setPassword("admin");
         Connection c = f.newConnection();
         Channel ch = c.createChannel();
-        ch.queueDeclare("helloworld",false,false,false,null);
+        // ch.queueDeclare("helloworld",false,false,false,null);
+        ch.queueDeclare("task_queue", true, false, false, null);
         System.out.println("等待接收数据");
+
+        // 一次只接收一条消息,发送确认回执后发送下一条消息
+        ch.basicQos(1);
 
         DeliverCallback callback = new DeliverCallback() {
             @Override
             public void handle(String s, Delivery delivery) throws IOException {
                 String s1 = new String(delivery.getBody());
-                System.out.println("收到消息:"+s1);
+                System.out.println("收到消息:" + s1);
                 for (int i = 0; i < s1.length(); i++) {
                     if (s1.charAt(i) == '.') {
                         try {
@@ -35,9 +39,9 @@ public class Test4 {
                         }
                     }
                 }
-                System.out.println("消息处理完毕"+s1);
+                System.out.println("消息处理完毕" + s1);
                 // 发送回执
-                ch.basicAck(delivery.getEnvelope().getDeliveryTag(),false);
+                ch.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                 System.out.println("----------------\n\n");
             }
         };
