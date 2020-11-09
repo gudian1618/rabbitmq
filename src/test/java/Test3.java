@@ -1,6 +1,7 @@
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.MessageProperties;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -23,7 +24,10 @@ public class Test3 {
         Connection c = f.newConnection();
         Channel ch = c.createChannel();
         //参数:queue,durable,exclusive,autoDelete,arguments
-        ch.queueDeclare("helloworld", false,false,false,null);
+        // ch.queueDeclare("helloworld", false,false,false,null);
+
+        // 队列持久化durable=true
+        ch.queueDeclare("task_queue", true,false,false,null);
 
         while (true) {
             System.out.println("输入消息:");
@@ -31,7 +35,8 @@ public class Test3 {
             if ("exit".equals(msg)) {
                 break;
             }
-            ch.basicPublish("", "helloworld", null, msg.getBytes());
+            // ch.basicPublish("", "helloworld", null, msg.getBytes());
+            ch.basicPublish("", "task_queue", MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
             System.out.println("消息已发送");
         }
         c.close();

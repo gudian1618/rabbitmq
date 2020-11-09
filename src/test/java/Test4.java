@@ -36,6 +36,8 @@ public class Test4 {
                     }
                 }
                 System.out.println("消息处理完毕"+s1);
+                // 发送回执
+                ch.basicAck(delivery.getEnvelope().getDeliveryTag(),false);
                 System.out.println("----------------\n\n");
             }
         };
@@ -46,6 +48,9 @@ public class Test4 {
             }
         };
 
-        ch.basicConsume("helloworld", callback, cancelCallback);
+        // autoAck:true自动确认,服务器不等待客户端回执,发送消息后,直接删除
+        // 默认false手动确认,消费者向服务器发送确认回执
+        // 服务器发送消息后,不会等待消费者确认
+        ch.basicConsume("helloworld", false, callback, cancelCallback);
     }
 }
