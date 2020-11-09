@@ -23,9 +23,8 @@ public class Test5 {
         Connection c = f.newConnection();
         Channel ch = c.createChannel();
 
-        // 创建交换机,定义名字为logs的交换机,交换机类型为fanout
+        // 创建交换机
         // 如果交换机存在,什么都不做
-        // 这一步是必须的，因为禁止发布到不存在的交换
         ch.exchangeDeclare("logs", "fanout");
         while (true) {
             System.out.println("输入信息:");
